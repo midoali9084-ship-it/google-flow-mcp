@@ -279,12 +279,16 @@ def _close_overlays(page: Any) -> None:
     try:
         page.keyboard.press("Escape")
         time.sleep(0.5)
-        for _ in range(3):
+        for i in range(6):
             backdrop = page.locator(".cdk-overlay-backdrop-showing")
             if backdrop.count() == 0:
                 break
-            backdrop.last.click(force=True)
-            time.sleep(0.5)
+            # Alternate: some menus only close on a backdrop click, others only on Escape.
+            if i % 2 == 0:
+                backdrop.last.click(force=True)
+            else:
+                page.keyboard.press("Escape")
+            time.sleep(0.7)
     except Exception:
         pass
 
