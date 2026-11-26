@@ -26,6 +26,11 @@ FLOW_URL = "https://flow.google.com/?hl=en"  # labs.google/fx/tools/flow redirec
 
 def _ensure_english(page: Any) -> None:
     """Reload the current Flow page with hl=en if it isn't already (e.g. after opening a project)."""
+    # "New project" navigates to /project/... a moment later and drops hl=en; wait for it first.
+    try:
+        page.wait_for_url(re.compile(r"/project/"), timeout=15000)
+    except Exception:
+        pass
     url = page.url
     if "flow.google.com" in url and "hl=en" not in url:
         _goto_flow(page, url + ("&" if "?" in url else "?") + "hl=en")
